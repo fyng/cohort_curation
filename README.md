@@ -1,5 +1,3 @@
-# Cohort Curation with LLM
-
 This repository provides a reusable clinical data package and agent-driven workflows over real-world oncology data. Cohort curation is currently implemented as a dedicated skill, and additional workflows can be added in the same pattern.
 
 ## Human + AI Agent Collaboration
@@ -13,7 +11,20 @@ Expected interaction model:
 This collaborative workflow is required for cohort curation tasks.
 
 
-## Cohort Curation Workflow (Brief)
+## Regimen Curation
+Sample prompt:
+"""Use the Regimen Curation Orchestrator agent.
+
+Curate treatment regimens for this cohort subset:
+
+Cancer type: lung adenocarcinoma (LUAD)
+Stage: IV
+Age: >21
+Sex: all
+Prior treatment status: all"""
+
+## Cohort Curation 
+### Cohort Curation Workflow (Brief)
 For each new cohort analysis:
 1. Describe the cohort in plain language to the AI agent.
 2. The agent creates `cohort_analyses/YYYY-MM-DD_<cohort_name>/cohort.md` using `cohort_curation/cohort_criteria_template.md`.
@@ -25,7 +36,7 @@ For each new cohort analysis:
 Use the cohort skill at `.github/skills/cohort-curation/SKILL.md`.
 See `cohort_curation/WORKFLOW.md` for the full interactive protocol.
 
-## Usage Instructions for Human Users
+### Usage Instructions for Human Users
 1. Start in project root and open a chat with your AI agent.
 2. Provide a plain-language cohort request (disease, treatment, timing, inclusion/exclusion).
 
