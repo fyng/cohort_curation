@@ -24,7 +24,7 @@ Create under `cohort_analyses/` with date + short cohort label:
 - `cohort_analyses/YYYY-MM-DD_<cohort_name>`
 
 ### 3) Draft criteria document first
-Create `cohort.md` in the analysis folder using `cohort_criteria_template.md`.
+Create `cohort.md` in the analysis folder using `cohort_curation/cohort_criteria_template.md`.
 Prefill using user-provided details.
 
 ### 4) Clarify missing high-impact criteria interactively
