@@ -1,6 +1,6 @@
 # Cohort Curation with LLM
 
-This repository is a system for automated cohort curation. The user modifies as standard prompt template, which is submitted to an LLM agent that has knowledge of the data, and can create and run python scripts to perform queries of the data. 
+This repository provides a reusable clinical data package and agent-driven workflows over real-world oncology data. Cohort curation is currently implemented as a dedicated skill, and additional workflows can be added in the same pattern.
 
 ## Human + AI Agent Collaboration
 This repository is designed to be used collaboratively by a human user and an AI coding agent.
@@ -16,13 +16,14 @@ This collaborative workflow is required for cohort curation tasks.
 ## Cohort Curation Workflow (Brief)
 For each new cohort analysis:
 1. Describe the cohort in plain language to the AI agent.
-2. The agent creates `cohort_analyses/YYYY-MM-DD_<cohort_name>/cohort.md` using `cohort_criteria_template.md`.
+2. The agent creates `cohort_analyses/YYYY-MM-DD_<cohort_name>/cohort.md` using `cohort_curation/cohort_criteria_template.md`.
 3. The agent asks follow-up clarifying questions for unspecified high-impact criteria.
 4. The user reviews and edits `cohort.md` manually.
 5. Only after explicit user confirmation, the agent generates `build_cohort.py`.
 6. The agent runs analysis only if the user explicitly requests execution.
 
-See `WORKFLOW.md` for the full interactive protocol.
+Use the cohort skill at `.github/skills/cohort-curation/SKILL.md`.
+See `cohort_curation/WORKFLOW.md` for the full interactive protocol.
 
 ## Usage Instructions for Human Users
 1. Start in project root and open a chat with your AI agent.
@@ -74,6 +75,31 @@ The notebook performs import-time harmonization that is now exposed through pack
 - Standardized `ACTION` event labels (`DIAGNOSE`, `SEQUENCE`, `LAB`, `OBSERVE`, `PROGRESSION`, `TREAT`, `HISTOPATH`, `FIRST_CONSULT`)
 
 Filtering thresholds and cohort inclusion logic are intentionally not part of the package loaders.
+
+## Guideline PDF Parsing
+Large guideline PDFs can be parsed into LLM-friendly markdown artifacts under `guidelines/parsed/`.
+
+Run the batch parser from project root:
+
+```bash
+python -m parse_pdf --raw-root guidelines/raw --parsed-root guidelines/parsed
+```
+
+Parse a single file:
+
+```bash
+python -m parse_pdf --raw-root guidelines/raw --parsed-root guidelines/parsed --pdf breast.pdf
+```
+
+Output structure per guideline:
+- `pages/`: cleaned page markdown + metadata json
+- `sections/`: hierarchy-aware section markdown, TOC, section index
+- `chunks/`: ~1200-1800 token markdown chunks + chunk index
+- `tables/`: extracted markdown tables + index
+- `flowcharts/`: arrow-flow text artifacts + graph json
+- `reports/`: validation and sanitization reports
+
+Strict validation is enabled by default and fails when prohibited header/footer content remains in parsed markdown files.
 
 ## Using The Package
 
