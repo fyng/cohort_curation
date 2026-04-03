@@ -216,6 +216,7 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 
-# data files
+# data and output files
 /data
 /guidelines
+/regimen_curation_output
