@@ -1,42 +1,37 @@
-# Interactive Cohort Curation Protocol
+# Cohort Curation Protocol Details
+
+This file extends `../SKILL.md` with implementation-facing protocol details.
+Canonical gating rules and clarification format are defined only in `../SKILL.md`.
 
 ## Inputs
-- User's plain-language cohort intent.
-- Recognized constants snapshot: `cohort_curation/recognized_constants_snapshot.json`.
+- Plain-language cohort intent.
+- Criteria template: `cohort_curation/cohort_criteria_template.md`.
+- Human reference guide: `cohort_curation/reference_guide.md`.
+- Machine-readable reference data: `cohort_curation/reference_data.py`.
 
-## Steps
-1. Intake in plain language
-- Ask for diagnosis, treatment exposure, timing windows, and key inclusion/exclusion criteria.
+## Mapping Procedure
+1. Draft cohort metadata and clinical objective in `cohort.md`.
+2. Build explicit mappings in the form: user phrase -> constant category -> recognized constants.
+3. For disease and subtype mapping, evaluate sample-level fields in this order:
+   - `CANCER_TYPE_DETAILED`
+   - `ONCOTREE_CODE`
+   - `CANCER_TYPE`
+4. Record the chosen disease mapping and fallback rationale in `cohort.md`.
+5. Record the patient-level matching rule used by the cohort definition.
 
-2. Term mapping before criteria lock
-- Map natural-language terms to recognized constants.
-- Record mappings explicitly in `cohort.md` as user phrase -> constants.
-- Example mapping:
-  - User phrase: `PD1/PDL1 immunotherapy`
-  - Treatments: `Pembrolizumab`, `Durvalumab`, `Cemiplimab`, `Atezolizumab`, `Avelumab`
+## Criteria Completeness Check
+Mark each item as complete, deferred, or not applicable in `cohort.md`:
+- Diagnosis or stage definition.
+- Index date definition.
+- Exposure requirement and time window.
+- Biomarker or sample requirement and time window.
+- Follow-up or outcome ascertainment window.
+- Exclusion logic for missing key fields and impossible date ordering.
 
-3. Draft criteria document first
-- Create folder: `cohort_analyses/YYYY-MM-DD_<cohort_name>`.
-- Create `cohort.md` from `cohort_curation/cohort_criteria_template.md`.
-- Keep `cohort.md` as the source of truth throughout curation.
-
-4. Clarify missing high-impact criteria
-- Ask one follow-up question per unresolved high-impact criterion.
-- Every question must include:
-  - 3 default options
-  - 1 option to ignore/defer
-
-5. Update and review gate
-- Update `cohort.md` after each answer.
-- Pause for manual user review before any code generation.
-
-6. Readiness and execution gates
-- Generate `build_cohort.py` only after explicit user confirmation.
-- Execute scripts only after explicit user request.
-
-## Typical Clarification Topics
-- Diagnosis/stage definition
-- Index date
-- Exposure window
-- Biomarker/sample requirements
-- Follow-up minimum and censoring
+## Script Handoff Contract
+Before `build_cohort.py` generation, `cohort.md` should contain:
+- Finalized term mappings.
+- Numeric date windows and anchors.
+- Inclusion criteria tied to concrete fields or loader outputs.
+- Exclusion criteria tied to deterministic checks.
+- Output path inside the cohort analysis folder.

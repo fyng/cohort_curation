@@ -7,7 +7,7 @@ from typing import Any
 import numpy as np
 import pandas as pd
 
-from ..constants import FILE_NAMES, PATIENT_OS_STATUS_MAP, PATIENT_PRIOR_MED_MAP, PATIENT_SMOKING_MAP
+from ..reference_data import FILE_NAMES, PATIENT_OS_STATUS_MAP, PATIENT_PRIOR_MED_MAP, PATIENT_SMOKING_MAP
 from ..io import read_tsv
 
 

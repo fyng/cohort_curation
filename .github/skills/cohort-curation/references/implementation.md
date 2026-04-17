@@ -12,28 +12,16 @@ Each cohort analysis folder should contain:
 - Annotate where each inclusion/exclusion criterion is implemented.
 - Use defensive pandas handling for optional or malformed columns.
 
-## Run Commands (from project root)
-Install package:
+## Required Package Assets
+- `cohort_curation/build_cohort_template.py`
+- `cohort_curation/reference_guide.md`
+- `cohort_curation/reference_data.py`
 
-```bash
-pip install -e .
-```
+## Output Contract
+- Keep output path inside the active cohort analysis folder.
+- Emit per-filter row counts for quality-control traceability.
 
-Run cohort script (only after user asks):
-
-```bash
-.venv/bin/python cohort_analyses/YYYY-MM-DD_<cohort_name>/build_cohort.py \
-  --data-root data \
-  --output cohort_analyses/YYYY-MM-DD_<cohort_name>/final_cohort_patient_ids.txt
-```
-
-Validate output:
-
-```bash
-wc -l cohort_analyses/YYYY-MM-DD_<cohort_name>/final_cohort_patient_ids.txt
-head -n 10 cohort_analyses/YYYY-MM-DD_<cohort_name>/final_cohort_patient_ids.txt
-```
-
-## Notes
-- Keep cohort-specific inclusion/exclusion logic in analysis scripts, not package loaders.
-- Write one `PATIENT_ID` per line in final outputs.
+## Minimal Validation
+- Confirm output file exists after execution.
+- Confirm output IDs are unique and non-null.
+- Confirm every implemented filter maps to a criterion in `cohort.md`.

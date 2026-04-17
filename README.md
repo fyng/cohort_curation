@@ -13,7 +13,8 @@ This collaborative workflow is required for cohort curation tasks.
 
 ## Regimen Curation
 Sample prompt:
-"""Use the Regimen Curation Orchestrator agent.
+"""
+Use the Regimen Curation Orchestrator agent.
 
 Curate treatment regimens for this cohort subset:
 
@@ -21,9 +22,21 @@ Cancer type: lung adenocarcinoma (LUAD)
 Stage: IV
 Age: >21
 Sex: all
-Prior treatment status: all"""
+Prior treatment status: all
+"""
 
 ## Cohort Curation 
+Sample prompt:
+```
+Help me curate a cohort:
+- Age >=18
+- Any sex and ethnicity
+- All cancer types
+- patients treated with PD1/PDL1 immunotherapy
+- patients have IMPACT at least one IMPACT sample collected within 365 days BEFORE starting PD1/PDL1 immunotherapy
+- patients have a radiological progression finding within 3 months after PD1/PDL1 immunotherapy
+```
+
 ### Cohort Curation Workflow (Brief)
 For each new cohort analysis:
 1. Describe the cohort in plain language to the AI agent.
@@ -39,18 +52,6 @@ See `cohort_curation/WORKFLOW.md` for the full interactive protocol.
 ### Usage Instructions for Human Users
 1. Start in project root and open a chat with your AI agent.
 2. Provide a plain-language cohort request (disease, treatment, timing, inclusion/exclusion).
-
-    Example initial prompt:
-    ```
-    Help me curate a cohort:
-    - Age >=18
-    - Any sex and ethnicity
-    - All cancer types
-    - patients treated with PD1/PDL1 immunotherapy
-    - patients have IMPACT at least one IMPACT sample collected within 365 days BEFORE starting PD1/PDL1 immunotherapy
-    - patients have a radiological progression finding within 3 months after PD1/PDL1 immunotherapy
-    ```
-
 3. Answer the agent's clarification prompts.
 4. Review and edit the generated `cohort.md` file.
 5. Tell the agent when you are ready for script generation.

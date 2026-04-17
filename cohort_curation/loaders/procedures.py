@@ -6,8 +6,11 @@ from pathlib import Path
 
 import pandas as pd
 
-from ..constants import ACTION_LABELS, FILE_NAMES
+from ..reference_data import ACTION_LABELS, FILE_NAMES
 from ..io import read_tsv, resolve_data_root
+
+
+CURATIVE_SURGERY_PURPOSE = "Tumor removal"
 
 
 def load_treatment_raw(data_root: str | None = None) -> pd.DataFrame:
@@ -69,6 +72,19 @@ def load_surgery_harmonized(
     df["AGENT"] = "Surgery"
     df["ACTION"] = ACTION_LABELS["treatment"]
     return df
+
+
+def load_curative_surgery_harmonized(
+    data_root: str | None = None,
+    map_file: str | None = "procedure_map/surg_purpose_map.csv",
+) -> pd.DataFrame:
+    """Return surgery events admitted as curative surgery (Tumor removal only)."""
+    df = load_surgery_harmonized(data_root=data_root, map_file=map_file)
+    if "SURGERY_CATEGORY" not in df.columns:
+        return df.iloc[0:0].copy()
+
+    mask = df["SURGERY_CATEGORY"].astype("string").str.strip().str.lower().eq(CURATIVE_SURGERY_PURPOSE.lower())
+    return df.loc[mask].copy()
 
 
 def load_radiation_raw(data_root: str | None = None) -> pd.DataFrame:

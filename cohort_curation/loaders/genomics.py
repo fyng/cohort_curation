@@ -6,7 +6,7 @@ from typing import Any
 
 import pandas as pd
 
-from ..constants import ACTION_LABELS, FILE_NAMES
+from ..reference_data import ACTION_LABELS, FILE_NAMES
 from ..io import read_tsv
 
 
@@ -117,14 +117,39 @@ def load_cna_raw(data_root: str | None = None) -> pd.DataFrame:
     return df
 
 
+def load_sv_raw(data_root: str | None = None) -> pd.DataFrame:
+    """Load raw structural variant table."""
+    return read_tsv(FILE_NAMES["sv"], data_root=data_root)
+
+
+def _build_sv_gene_events(df_sv: pd.DataFrame) -> pd.DataFrame:
+    """Project structural-variant gene columns into a SAMPLE_ID x gene event table."""
+    parts: list[pd.DataFrame] = []
+    for gene_col in ["Site1_Hugo_Symbol", "Site2_Hugo_Symbol"]:
+        if {"SAMPLE_ID", gene_col}.issubset(df_sv.columns):
+            part = (
+                df_sv[["SAMPLE_ID", gene_col]]
+                .rename(columns={gene_col: "Hugo_Symbol"})
+                .dropna(subset=["SAMPLE_ID", "Hugo_Symbol"])
+            )
+            parts.append(part)
+
+    if not parts:
+        return pd.DataFrame(columns=["SAMPLE_ID", "Hugo_Symbol", "SV_EVENT_COUNT"])
+
+    sv_long = pd.concat(parts, ignore_index=True)
+    return sv_long.groupby(["SAMPLE_ID", "Hugo_Symbol"]).size().reset_index(name="SV_EVENT_COUNT")
+
+
 def load_genomics_event_table(data_root: str | None = None) -> pd.DataFrame:
     """Build a minimally harmonized genomics event table.
 
-    This combines mutation and CNA data by sample and gene without QC thresholds.
+    This combines mutation, CNA, and structural-variant data by sample and gene without QC thresholds.
     """
     sample = load_sample_harmonized(data_root=data_root)
     mut = load_mutations_raw(data_root=data_root)
     cna = load_cna_raw(data_root=data_root)
+    sv = load_sv_raw(data_root=data_root)
 
     mut_cols = [col for col in ["SAMPLE_ID", "Hugo_Symbol", "Variant_Classification"] if col in mut.columns]
     cna_cols = [col for col in ["SAMPLE_ID", "Hugo_Symbol", "Alteration", "ALTERATION_LABEL"] if col in cna.columns]
@@ -134,8 +159,10 @@ def load_genomics_event_table(data_root: str | None = None) -> pd.DataFrame:
         mut_small = mut_small.groupby(["SAMPLE_ID", "Hugo_Symbol"]).size().reset_index(name="MUTATION_COUNT")
 
     cna_small = cna[cna_cols].copy() if cna_cols else pd.DataFrame(columns=["SAMPLE_ID", "Hugo_Symbol"])
+    sv_small = _build_sv_gene_events(sv)
 
     merged = mut_small.merge(cna_small, on=["SAMPLE_ID", "Hugo_Symbol"], how="outer")
+    merged = merged.merge(sv_small, on=["SAMPLE_ID", "Hugo_Symbol"], how="outer")
 
     sample_cols = [col for col in ["SAMPLE_ID", "PATIENT_ID", "START_DATE", "ACTION"] if col in sample.columns]
     merged = merged.merge(sample[sample_cols], on="SAMPLE_ID", how="left")

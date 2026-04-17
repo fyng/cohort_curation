@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from ..constants import ACTION_LABELS, FILE_NAMES
+from ..reference_data import ACTION_LABELS, FILE_NAMES
 from ..io import read_tsv, resolve_data_root
 
 

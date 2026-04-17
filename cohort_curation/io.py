@@ -8,7 +8,7 @@ from typing import Any, cast
 
 import pandas as pd
 
-from .constants import DATA_ROOT_ENV_VAR, DEFAULT_DATA_ROOT_CANDIDATES
+from .reference_data import DATA_ROOT_ENV_VAR, DEFAULT_DATA_ROOT_CANDIDATES
 
 
 def resolve_data_root(data_root: str | Path | None = None) -> Path:

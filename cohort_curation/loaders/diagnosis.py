@@ -7,7 +7,7 @@ from typing import Any
 
 import pandas as pd
 
-from ..constants import ACTION_LABELS, FILE_NAMES
+from ..reference_data import ACTION_LABELS, FILE_NAMES
 from ..io import read_tsv
 
 
@@ -15,6 +15,8 @@ DIAGNOSIS_COLUMNS = [
     "PATIENT_ID",
     "START_DATE",
     "ACTION",
+    "CLINICAL_GROUP",
+    "STAGE_CDM_DERIVED_GRANULAR",
     "STAGE",
     "CANCER_TYPE",
     "CANCER_TYPE_DETAILED",
@@ -94,7 +96,7 @@ def load_diagnosis_harmonized(data_root: str | None = None) -> pd.DataFrame:
         ) = zip(*parsed)
 
     if "STAGE_CDM_DERIVED_GRANULAR" in df.columns:
-        df = df.rename(columns={"STAGE_CDM_DERIVED_GRANULAR": "STAGE"})
+        df["STAGE"] = df["STAGE_CDM_DERIVED_GRANULAR"]
 
     df["ACTION"] = ACTION_LABELS["diagnosis"]
 
